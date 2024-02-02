@@ -14,17 +14,24 @@ df = pd.read_csv('file_mapping.csv')
 
 # Adjust rotation angle and scaling factor in preprocess_image function
 def preprocess_image(image_path, target_size=(70, 70), rotation_angle=45, scale_factor=0.7):
+    # Check if the file exists
     if not os.path.exists(image_path):
         raise FileNotFoundError(f"File not found: {image_path}")
 
+    # Read the image
     image = cv2.imread(image_path)
     if image is None:
         raise ValueError(f"Failed to read image: {image_path}")
 
+    # Apply rotation transformation
     rows, cols = image.shape[:2]
     rotation_matrix = cv2.getRotationMatrix2D((cols/2, rows/2), rotation_angle, 1)
     rotated_image = cv2.warpAffine(image, rotation_matrix, (cols, rows))
+
+    # Apply scaling transformation
     scaled_image = cv2.resize(rotated_image, target_size)
+
+    # Flatten the image to create a feature vector
     flattened_image = scaled_image.flatten()
     return flattened_image
 
